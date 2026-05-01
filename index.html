@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radz Trade Pro - Simulasi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Warna ala TradingView / Professional Exchange */
+            --bg-color: #131722;
+            --panel-bg: #1e222d;
+            --border-color: #2a2e39;
+            --text-main: #d1d4dc;
+            --text-muted: #787b86;
+            --accent: #2962ff;
+            --green: #089981;
+            --red: #f23645;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            padding: 18px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: 1px;
+            background-color: var(--panel-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Logo Styling */
+        .logo-icon {
+            color: var(--accent);
+            font-size: 1.5rem;
+            background: rgba(41, 98, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .app-container {
+            padding: 15px 15px 90px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .view { display: none; animation: fadeIn 0.2s ease-in-out; }
+        .view.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .asset-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        .asset-selector::-webkit-scrollbar { display: none; }
+        .asset-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .asset-btn.active {
+            background: var(--panel-bg);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .chart-card {
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .chart-header {
+            padding: 15px 15px 5px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .pair-title { font-size: 1.1rem; font-weight: bold; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .pair-price { font-size: 1.8rem; font-weight: bold; margin-top: 5px; transition: color 0.3s; }
+        .price-up { color: var(--green); }
+        .price-down { color: var(--red); }
+        
+        .chart-container {
+            padding: 10px;
+            height: 280px;
+            position: relative;
+        }
+
+        .trade-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            transition: 0.15s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn span { font-size: 0.75rem; font-weight: normal; opacity: 0.8; }
+        .btn:active { transform: translateY(2px); }
+        .btn-buy { background-color: var(--green); }
+        .btn-buy:hover { background-color: #067a67; }
+        .btn-sell { background-color: var(--red); }
+        .btn-sell:hover { background-color: #c92a37; }
+        
+        .btn-close { 
+            grid-column: span 2; 
+            background-color: var(--panel-bg); 
+            border: 1px solid var(--border-color); 
+            color: var(--text-main);
+            flex-direction: row;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-close:hover { background-color: #2a2e39; }
+
+        .position-info {
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+            border-left: 4px solid var(--accent);
+        }
+        .position-info.active { display: block; }
+        .pos-row { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); }
+        .pos-row strong { color: var(--text-main); }
+
+        .analysis-box {
+            background: rgba(41, 98, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .balance-card { padding: 25px 20px; margin-bottom: 20px; text-align: center; }
+        .balance-title { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px; }
+        .balance-amount { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; color: var(--text-main); }
+        .profit-amount { font-size: 1.1rem; font-weight: 600; }
+        .profit-amount.positive { color: var(--green); }
+        .profit-amount.negative { color: var(--red); }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.85rem; }
+        .input-group input {
+            width: 100%; padding: 12px;
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            color: var(--text-main); border-radius: 8px; outline: none; font-size: 1rem;
+        }
+        .input-group input:focus { border-color: var(--accent); }
+        .input-group input:disabled { color: var(--text-muted); cursor: not-allowed; }
+
+        .btn-action {
+            width: 100%; background: var(--accent); color: #fff;
+            padding: 14px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-action:hover { background: #1e4bd8; }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 65px;
+            background: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            /* Gunakan Flexbox untuk susunan horizontal */
+            display: flex; 
+            flex-direction: row; /* Memastikan ke samping, bukan ke bawah */
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column; /* Ikon di atas, teks di bawah */
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            /* Bagi lebar secara rata. Jika ada 3 menu gunakan 33%, jika 4 gunakan 25% */
+            width: 25%; 
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .nav-item.active { color: var(--accent); }
+        .nav-item:hover { color: var(--text-main); }
+
+        /* Tambahan CSS Error untuk Login & Mata Password */
+        .error-text {
+            color: var(--red);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: block;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            bottom: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .toggle-password:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fas fa-layer-group logo-icon"></i> Nexa
+    </div>
+
+    <div class="app-container">
+        
+        <div id="view-trade" class="view active">
+            
+            <div class="asset-selector" id="assetSelector">
+            </div>
+
+            <div class="panel chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-title" id="displayAssetTitle">
+                            <i class="fab fa-bitcoin" id="assetLogo" style="color: #f7931a;"></i> BTC/USDT
+                        </div>
+                        <div class="pair-price price-up" id="displayAssetPrice">$0.00</div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); background: var(--bg-color); padding: 4px 8px; border-radius: 4px;">Live 1s</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="tradingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="panel position-info" id="positionInfo">
+                <div class="pos-row"><span>Status Order:</span> <strong id="posType">-</strong></div>
+                <div class="pos-row"><span>Entry Price:</span> <strong id="posEntry">-</strong></div>
+                <div class="pos-row"><span>Mark Price:</span> <strong id="posCurrent">-</strong></div>
+                <div style="height: 1px; background: var(--border-color); margin: 10px 0;"></div>
+                <div class="pos-row" style="align-items: center;">
+                    <span>Unrealized PNL:</span> 
+                    <strong id="posProfit" style="font-size: 1.4rem;">$0.00</strong>
+                </div>
+            </div>
+
+            <div class="trade-controls">
+                <button class="btn btn-buy" onclick="openPosition('buy')">
+                    Buy / Long
+                    <span id="buyPriceDisplay">Loading...</span>
+                </button>
+                <button class="btn btn-sell" onclick="openPosition('sell')">
+                    Sell / Short
+                    <span id="sellPriceDisplay">Loading...</span>
+                </button>
+                <button class="btn btn-close" id="btnClosePos" style="display:none;" onclick="closePosition()">
+                    <i class="fas fa-times-circle"></i> Close Position
+                </button>
+            </div>
+
+            <div class="analysis-box">
+                <i class="fas fa-robot"></i> Analisis AI: <span id="analysisStatus" style="font-weight: 600; color: var(--text-main);">Menganalisis...</span>
+            </div>
+        </div>
+
+        <div id="view-wallet" class="view">
+            <div class="panel balance-card">
+                <div class="balance-title">Estimasi Saldo Akun (USD)</div>
+                <div class="balance-amount" id="displayBalance">Loading...</div>
+                <div class="balance-title">Total PNL Keseluruhan</div>
+                <div class="profit-amount" id="displayTotalProfit">$0.00</div>
+            </div>
+
+            <div class="panel" style="padding: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <i class="fas fa-coins" style="color: var(--accent);"></i> Manajemen Dana
+                </h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.5;">
+                    Saldo tersinkronisasi dengan Admin. Untuk penambahan dana (Top-Up) manual. hubungi Admin, Whatsapp : +62-899-3360-673
+                </p>
+                <button class="btn-action" onclick="requestTopUp()">Tarik Saldo</button>
+            </div>
+        </div>
+
+        <div id="view-profile" class="view">
+            <div class="panel" style="padding: 20px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="width: 70px; height: 70px; background: var(--bg-color); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--text-muted); border: 1px solid var(--border-color); margin-bottom: 10px;">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 style="font-size: 1.1rem;">Pengaturan Akun</h3>
+                </div>
+
+                <div class="input-group">
+                    <label>ID Pengguna</label>
+                    <input type="text" id="userId" value="Loading..." disabled>
+                </div>
+                <div class="input-group">
+                    <label>Nama Tampilan</label>
+                    <input type="text" id="userName" value="Loading...">
+                </div>
+                <div class="input-group" style="position: relative;">
+                    <label>Kata Sandi Akun</label>
+                    <input type="password" id="userPassword" placeholder="Buat atau perbarui kata sandi...">
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('userPassword', this)"></i>
+                </div>
+                <button class="btn-action" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main);" onclick="saveProfile()">Simpan Perubahan</button>
+            </div>
+
+            <div class="panel" style="padding: 20px; margin-top: 20px;">
+                <button class="btn-action" id="btnToggleLogin" onclick="toggleLoginForm()" style="margin-top: 0; background: transparent; border: 1px solid var(--border-color); color: var(--text-main);">
+                    <i class="fas fa-sign-in-alt" style="color: var(--accent);"></i>  Login Akun Yang Sudah Ada
+                </button>
+                
+                <div id="loginFormContainer" style="display: none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <div class="input-group">
+                        <label>ID Akun</label>
+                        <input type="text" id="loginId" placeholder="Masukkan ID Pengguna (UID-...)">
+                    </div>
+                    <div class="input-group" style="position: relative;">
+                        <label>Kata Sandi</label>
+                        <input type="password" id="loginPass" placeholder="Masukkan Kata Sandi">
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPass', this)"></i>
+                    </div>
+                    <span id="loginError" class="error-text"></span>
+                    <button class="btn-action" onclick="loginAccount()">Login Akun</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchView('trade', this)">
+         <i class="fas fa-chart-line"></i>
+            <span>Trade</span>
+        </div>
+        <div class="nav-item" onclick="switchView('wallet', this)">
+            <i class="fas fa-wallet"></i>
+            <span>Saldo</span>
+        </div>
+        <div class="nav-item" onclick="switchView('profile', this)">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // 1. Inisialisasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- STATE & DATA ASET ---
+        let balance = 0; // Akan di-load dari firebase
+        let totalProfit = 0;
+        let currentAsset = 'BTC';
+
+        const assets = {
+            'BTC': { name: 'Bitcoin', price: 64230.50, volatility: 45, color: '#f7931a', icon: 'fab fa-bitcoin' },
+            'ETH': { name: 'Ethereum', price: 3450.20, volatility: 12, color: '#627eea', icon: 'fab fa-ethereum' },
+            'USDT': { name: 'Tether', price: 1.00, volatility: 0.0001, color: '#26a17b', icon: 'fas fa-dollar-sign' },
+            'XRP': { name: 'Ripple', price: 0.62, volatility: 0.005, color: '#23292f', icon: 'fas fa-times' },
+            'LTC': { name: 'Litecoin', price: 85.40, volatility: 0.5, color: '#345d9d', icon: 'fas fa-litecoin-sign' }
+        };
+
+        let activePosition = null;
+
+        // --- SETUP USER & FIREBASE ---
+        let myID = localStorage.getItem('radz_trade_id');
+        if (!myID) {
+            myID = "UID-" + Math.floor(100000 + Math.random() * 900000) + "-RZ";
+            localStorage.setItem('radz_trade_id', myID);
+            
+            // Set data awal ke database, ditambahkan default password kosong
+            set(ref(db, `users/${myID}/profile`), { 
+                id: myID, 
+                name: "Trader Baru", 
+                password: "", 
+                balance: 10000.00, // Saldo awal simulasi
+                totalProfit: 0.00
+            });
+        }
+
+        document.getElementById('userId').value = myID;
+        const userRef = ref(db, `users/${myID}/profile`);
+
+        // Sinkronisasi Real-time dari Firebase (Ditambah sinkronisasi password)
+        onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                balance = data.balance !== undefined ? data.balance : 10000;
+                totalProfit = data.totalProfit !== undefined ? data.totalProfit : 0;
+                document.getElementById('userName').value = data.name || "Trader Baru";
+                document.getElementById('userPassword').value = data.password || "";
+                updateUI();
+            }
+        });
+
+
+        // --- MENGEKSPOS FUNGSI KE GLOBAL WINDOW (karena type="module") ---
+        window.switchView = function(viewId, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            element.classList.add('active');
+            updateUI();
+        };
+
+        window.changeAsset = function(assetKey) {
+            if(activePosition) {
+                alert("Tutup posisi Anda saat ini sebelum mengganti aset pair!");
+                document.querySelectorAll('.asset-btn').forEach(b => {
+                    b.classList.remove('active');
+                    if(b.innerText === currentAsset) b.classList.add('active');
+                });
+                return;
+            }
+            currentAsset = assetKey;
+            
+            // Update Teks dan Logo di header Trade
+            let assetObj = assets[assetKey];
+            document.getElementById('displayAssetTitle').innerHTML = `<i class="${assetObj.icon}" style="color: ${assetObj.color};"></i> ${assetKey}/USDT`;
+            
+            initChartData();
+        };
+
+        window.openPosition = function(type) {
+            if(activePosition) { alert("Anda masih memiliki order terbuka!"); return; }
+            if(balance <= 0) { alert("Saldo tidak mencukupi!"); return; }
+
+            let currentPrice = assets[currentAsset].price;
+            activePosition = { type: type, entryPrice: currentPrice, asset: currentAsset };
+
+            document.getElementById('positionInfo').classList.add('active');
+            let typeEl = document.getElementById('posType');
+            typeEl.innerText = type === 'buy' ? 'LONG' : 'SHORT';
+            typeEl.style.color = type === 'buy' ? 'var(--green)' : 'var(--red)';
+            document.getElementById('positionInfo').style.borderLeftColor = type === 'buy' ? 'var(--green)' : 'var(--red)';
+            
+            document.getElementById('posEntry').innerText = currentPrice < 10 ? currentPrice.toFixed(4) : currentPrice.toFixed(2);
+            document.getElementById('btnClosePos').style.display = 'flex';
+
+            document.getElementById('assetSelector').style.opacity = '0.4';
+            document.getElementById('assetSelector').style.pointerEvents = 'none';
+        };
+
+        window.closePosition = async function() {
+            if(!activePosition) return;
+
+            let currentPrice = assets[currentAsset].price;
+            let difference = currentPrice - activePosition.entryPrice;
+            let leverage = 50;
+            let profit = 0;
+
+            if(activePosition.type === 'buy') {
+                profit = (difference / activePosition.entryPrice) * 1000 * leverage;
+            } else {
+                profit = -(difference / activePosition.entryPrice) * 1000 * leverage;
+            }
+
+            // Update Saldo Lokal
+            balance += profit;
+            totalProfit += profit;
+            
+            // UPDATE KE FIREBASE
+            try {
+                await update(userRef, { 
+                    balance: balance,
+                    totalProfit: totalProfit
+                });
+            } catch (error) {
+                console.error("Gagal menyimpan ke Firebase:", error);
+            }
+
+            activePosition = null;
+            document.getElementById('positionInfo').classList.remove('active');
+            document.getElementById('btnClosePos').style.display = 'none';
+            document.getElementById('assetSelector').style.opacity = '1';
+            document.getElementById('assetSelector').style.pointerEvents = 'auto';
+
+            updateUI();
+        };
+
+        window.requestTopUp = function() {
+            alert("Akses Ditolak: Konfirmasi Ke Admin Terlebih Dahulu.");
+        };
+
+        // Modifikasi fungsi saveProfile untuk menyimpan password
+        window.saveProfile = async function() {
+            let newName = document.getElementById('userName').value;
+            let newPass = document.getElementById('userPassword').value;
+            try {
+                await update(userRef, { name: newName, password: newPass });
+                alert(`Profil diperbarui! Nama dan Kata Sandi tersimpan ke Database.`);
+            } catch (error) {
+                alert("Gagal menyimpan data. Periksa koneksi.");
+            }
+        };
+
+        // Fungsi Baru: Toggle Panel Login
+        window.toggleLoginForm = function() {
+            const container = document.getElementById('loginFormContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        };
+
+        // Fungsi Baru: Toggle Tampilan Mata Password
+        window.togglePassword = function(inputId, iconElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.remove('fa-eye');
+                iconElement.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                iconElement.classList.remove('fa-eye-slash');
+                iconElement.classList.add('fa-eye');
+            }
+        };
+
+        // Fungsi Baru: Login ke akun lama
+        window.loginAccount = async function() {
+            let loginId = document.getElementById('loginId').value.trim();
+            let loginPass = document.getElementById('loginPass').value;
+            let errorMsg = document.getElementById('loginError');
+
+            errorMsg.innerText = ""; // Bersihkan pesan error sebelumnya
+
+            if (!loginId || !loginPass) {
+                errorMsg.innerText = "ID dan Kata Sandi harus diisi!";
+                return;
+            }
+
+            try {
+                const checkRef = ref(db, `users/${loginId}/profile`);
+                const snapshot = await get(checkRef);
+                
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.password === loginPass) {
+                        // Login sukses, timpa localstorage dengan ID baru dan muat ulang halaman
+                        localStorage.setItem('radz_trade_id', loginId);
+                        alert("Login berhasil! Memuat ulang sistem...");
+                        location.reload(); 
+                    } else {
+                        errorMsg.innerText = "Kata sandi salah!";
+                    }
+                } else {
+                    errorMsg.innerText = "ID Akun tidak ditemukan!";
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                errorMsg.innerText = "Terjadi kesalahan saat memproses login.";
+            }
+        };
+
+
+        // --- RENDER ASSET BUTTONS ---
+        const assetSelector = document.getElementById('assetSelector');
+        Object.keys(assets).forEach(key => {
+            let btn = document.createElement('div');
+            btn.className = `asset-btn ${key === currentAsset ? 'active' : ''}`;
+            btn.innerText = key;
+            btn.onclick = () => {
+                document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                window.changeAsset(key);
+            };
+            assetSelector.appendChild(btn);
+        });
+
+        // --- LOGIKA CHART.JS DETERMINISTIK ---
+        const ctx = document.getElementById('tradingChart').getContext('2d');
+        let chartData = [];
+        let chartLabels = [];
+        let tradingChart;
+        let lastPrice = 0;
+
+        function getDeterministicPrice(assetKey, timeSeconds) {
+            let asset = assets[assetKey];
+            if (!asset.basePrice) asset.basePrice = asset.price; 
+            
+            let seed = assetKey.charCodeAt(0);
+            let trend = Math.sin(timeSeconds / 120 + seed) * asset.volatility * 10;
+            let wave = Math.cos(timeSeconds / 25 + seed) * asset.volatility * 4;
+            
+            let noiseSeed = timeSeconds * 12.9898 + seed;
+            let pseudoRandom = Math.abs(Math.sin(noiseSeed) * 43758.5453) % 1; 
+            let multiplier = pseudoRandom > 0.90 ? 2.5 : 1;
+            let jagged = (pseudoRandom - 0.5) * asset.volatility * 2 * multiplier;
+            
+            return Math.max(0.0001, asset.basePrice + trend + wave + jagged);
+        }
+
+        function initChartData() {
+            chartData = [];
+            chartLabels = [];
+            let currentUnixSeconds = Math.floor(Date.now() / 1000);
+            
+            for(let i = 25; i >= 0; i--) {
+                let time = currentUnixSeconds - i;
+                let dateObj = new Date(time * 1000);
+                chartLabels.push(dateObj.getSeconds() + "s");
+                
+                let calculatedPrice = getDeterministicPrice(currentAsset, time);
+                chartData.push(calculatedPrice);
+            }
+            
+            assets[currentAsset].price = chartData[chartData.length - 1];
+            lastPrice = chartData[chartData.length - 2] || assets[currentAsset].price;
+            
+            updateChartConfig();
+            updatePriceDisplay();
+        }
+
+        function updateChartConfig() {
+            if(tradingChart) tradingChart.destroy();
+            
+            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(41, 98, 255, 0.2)');
+            gradient.addColorStop(1, 'rgba(41, 98, 255, 0)');
+
+            tradingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data: chartData,
+                        borderColor: '#2962ff',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.1 
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    layout: { padding: { left: -10, bottom: -10 } },
+                    scales: {
+                        x: { display: false },
+                        y: { 
+                            position: 'right',
+                            grid: { color: '#2a2e39', borderDash: [5, 5] },
+                            border: { display: false },
+                            ticks: { color: '#787b86', font: { size: 10 } }
+                        }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                }
+            });
+        }
+
+        setInterval(() => {
+            let asset = assets[currentAsset];
+            let currentUnixSeconds = Math.floor(Date.now() / 1000);
+            let newPrice = getDeterministicPrice(currentAsset, currentUnixSeconds);
+            
+            lastPrice = asset.price;
+            asset.price = newPrice;
+
+            chartLabels.push("");
+            chartData.push(asset.price);
+
+            if(chartData.length > 35) {
+                chartLabels.shift();
+                chartData.shift();
+            }
+
+            tradingChart.update();
+            updatePriceDisplay();
+            updateAnalysisText();
+            calculateFloatingProfit();
+
+        }, 1000);
+
+        function updatePriceDisplay() {
+            let currentPrice = assets[currentAsset].price;
+            let priceEl = document.getElementById('displayAssetPrice');
+            
+            let formattedPrice = currentPrice < 10 ? currentPrice.toFixed(4) : currentPrice.toFixed(2);
+            priceEl.innerText = `$${formattedPrice}`;
+            
+            if(currentPrice >= lastPrice) {
+                priceEl.className = 'pair-price price-up';
+                tradingChart.data.datasets[0].borderColor = '#089981'; 
+            } else {
+                priceEl.className = 'pair-price price-down';
+                tradingChart.data.datasets[0].borderColor = '#f23645'; 
+            }
+
+            document.getElementById('buyPriceDisplay').innerText = formattedPrice;
+            document.getElementById('sellPriceDisplay').innerText = formattedPrice;
+        }
+
+        function updateAnalysisText() {
+            let p1 = chartData[chartData.length-3];
+            let p2 = chartData[chartData.length-1];
+            let statusEl = document.getElementById('analysisStatus');
+            
+            if(p2 > p1) {
+                statusEl.innerHTML = `Trend <span style="color:var(--green)">Bullish</span> (Tekanan Beli Kuat)`;
+            } else {
+                statusEl.innerHTML = `Trend <span style="color:var(--red)">Bearish</span> (Distribusi Penjualan)`;
+            }
+        }
+
+        function calculateFloatingProfit() {
+            if(!activePosition) return;
+            
+            let currentPrice = assets[currentAsset].price;
+            document.getElementById('posCurrent').innerText = currentPrice < 10 ? currentPrice.toFixed(4) : currentPrice.toFixed(2);
+
+            let difference = currentPrice - activePosition.entryPrice;
+            let leverage = 50; 
+            let profit = 0;
+
+            if(activePosition.type === 'buy') {
+                profit = (difference / activePosition.entryPrice) * 1000 * leverage;
+            } else {
+                profit = -(difference / activePosition.entryPrice) * 1000 * leverage;
+            }
+
+            let profitEl = document.getElementById('posProfit');
+            profitEl.innerText = `${profit >= 0 ? '+' : ''}$${profit.toFixed(2)}`;
+            profitEl.style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
+        }
+
+        function updateUI() {
+            document.getElementById('displayBalance').innerText = `$${balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            let profitEl = document.getElementById('displayTotalProfit');
+            profitEl.innerText = `${totalProfit >= 0 ? '+' : ''}$${totalProfit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            profitEl.className = totalProfit >= 0 ? 'profit-amount positive' : 'profit-amount negative';
+        }
+
+        // Mulai rendering pertama
+        initChartData();
+        updateUI();
+
+// Pantau data user secara realtime
+onValue(userRef, (snapshot) => {
+    const data = snapshot.val();
+    
+    // LOGIC UTAMA: Cek jika isBanned true
+    if (data && data.profile && data.profile.isBanned === true) {
+        showBanScreen(); // Panggil fungsi layar ban
+        return; // Hentikan sisa script agar game tidak jalan
+    }
+});
+
+
+
+
+
+    </script>
+</body>
+</html>
