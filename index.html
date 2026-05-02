@@ -3,106 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radz Cloud - Ultra Edition</title>
+    <title>Radz Cloud - Real Hosting</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #010409; color: #e6edf3; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        body { background: #050505; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(20, 20, 25, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .page { display: none; }
-        .active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-        .neon-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-        .modal-active { display: flex !important; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        .active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-show { display: flex !important; animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="pb-32">
 
-    <div id="custom-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-6">
-        <div class="glass w-full max-w-xs p-8 rounded-[2.5rem] text-center neon-glow">
-            <div id="modal-icon" class="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-blue-500/20 text-blue-500 text-2xl">
-                <i class="fas fa-check-circle"></i>
+    <div id="resultModal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden items-center justify-center p-6">
+        <div class="glass w-full max-w-sm p-8 rounded-[2.5rem] text-center border-blue-500/30">
+            <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-500 text-3xl">
+                <i class="fas fa-globe-americas animate-pulse"></i>
             </div>
-            <h3 id="modal-title" class="text-xl font-black mb-2">Success!</h3>
-            <p id="modal-desc" class="text-xs text-gray-400 mb-6 leading-relaxed">Your project is now live on the global network.</p>
-            <div id="modal-action-area" class="space-y-3">
-                </div>
-            <button onclick="closeModal()" class="mt-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Close</button>
+            <h2 class="text-2xl font-black mb-2">Situs Aktif!</h2>
+            <p class="text-xs text-gray-500 mb-8">Website kamu sudah online di server global.</p>
+            
+            <div class="space-y-3">
+                <a id="liveLink" href="#" target="_blank" class="block w-full bg-blue-600 py-4 rounded-2xl font-black text-xs tracking-widest uppercase shadow-lg shadow-blue-900/40">BUKA WEBSITE</a>
+                <button onclick="copyCurrentLink()" class="w-full bg-white/5 py-4 rounded-2xl font-black text-xs tracking-widest uppercase border border-white/10">SALIN LINK</button>
+            </div>
+            <button onclick="closeModal()" class="mt-6 text-[10px] font-bold text-gray-600 hover:text-white transition">TUTUP</button>
         </div>
     </div>
 
     <div class="max-w-md mx-auto p-6">
-        <header class="flex justify-between items-center py-6">
-            <div class="flex flex-col">
-                <h1 class="text-2xl font-black italic tracking-tighter text-white">RADZ<span class="text-blue-500">.HOST</span></h1>
-                <span class="text-[9px] font-black text-blue-500/60 uppercase tracking-widest">Network Stable</span>
+        <header class="flex justify-between items-center py-6 mb-4">
+            <div>
+                <h1 class="text-2xl font-black italic text-white tracking-tighter">RADZ<span class="text-blue-500">.HOST</span></h1>
+                <p class="text-[9px] font-bold text-blue-500/50 uppercase tracking-[0.3em]">Network Stable</p>
             </div>
             <div class="glass px-5 py-3 rounded-2xl border-r-4 border-blue-500">
-                <p class="text-[8px] text-gray-500 font-bold uppercase">Main Wallet</p>
-                <p id="balance-val" class="text-sm font-black text-white">Rp 0</p>
+                <p class="text-[8px] text-gray-500 font-bold uppercase">Balance</p>
+                <p id="bal-text" class="text-sm font-black text-white">Rp 0</p>
             </div>
         </header>
 
-        <div id="admin-notice" class="glass p-4 rounded-2xl mb-8 hidden border-l-4 border-yellow-500">
+        <div id="adminBox" class="glass p-4 rounded-2xl mb-8 hidden border-l-4 border-blue-600">
             <div class="flex gap-3">
-                <i class="fas fa-bolt text-yellow-500 mt-1"></i>
-                <p id="notice-content" class="text-[11px] text-gray-300 font-medium">Memuat info...</p>
+                <i class="fas fa-satellite-dish text-blue-500 mt-1"></i>
+                <p id="adminMsg" class="text-[11px] leading-relaxed text-gray-300"></p>
             </div>
         </div>
 
         <section id="home" class="page active">
-            <div class="glass p-7 rounded-[2.5rem] mb-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 text-5xl italic font-black text-blue-500">CODE</div>
-                <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
-                    <i class="fas fa-layer-group text-blue-500 text-sm"></i> Instant Deploy
-                </h2>
+            <div class="glass p-7 rounded-[2.5rem] mb-10 border-white/5 relative overflow-hidden">
+                <div class="flex items-center gap-2 mb-6">
+                    <i class="fas fa-terminal text-blue-500 text-xs"></i>
+                    <h2 class="text-sm font-black uppercase tracking-widest">Instant Deploy</h2>
+                </div>
                 
-                <textarea id="html-code" placeholder="<html> ... </html>" 
-                    class="w-full h-56 bg-black/40 border border-white/5 rounded-3xl p-5 text-xs font-mono text-blue-300 focus:border-blue-500/50 outline-none transition-all mb-5 placeholder:opacity-30"></textarea>
+                <textarea id="codeEditor" placeholder="Tempel kode HTML di sini..." 
+                    class="w-full h-64 bg-black/60 border border-white/5 rounded-3xl p-5 text-[11px] font-mono text-blue-300 focus:border-blue-500/50 outline-none transition-all mb-6"></textarea>
                 
-                <button onclick="startProcessing()" id="btn-deploy"
-                    class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-[1.5rem] font-black text-xs tracking-[0.2em] shadow-xl shadow-blue-900/40 active:scale-95 transition-all">
-                    LAUNCH PROJECT
+                <button onclick="handleDeploy()" id="btnDeploy" class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-[1.8rem] font-black text-xs tracking-[0.2em] shadow-2xl shadow-blue-900/40 active:scale-95 transition-all">
+                    LAUNCH TO CLOUD
                 </button>
 
-                <div id="progress-container" class="hidden mt-8">
-                    <div class="flex justify-between items-center mb-3">
-                        <span id="p-status" class="text-[10px] font-black text-gray-500 uppercase italic">Initializing...</span>
-                        <span id="p-percent" class="text-xs font-black text-blue-500">0%</span>
+                <div id="pContainer" class="hidden mt-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="pStatus" class="text-[10px] font-bold text-gray-500 uppercase">Uploading...</span>
+                        <span id="pPercent" class="text-xs font-black text-blue-500">0%</span>
                     </div>
                     <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                        <div id="p-bar" class="h-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)] transition-all duration-300" style="width: 0%"></div>
+                        <div id="pBar" class="h-full bg-blue-500 shadow-[0_0_15px_#3b82f6] transition-all" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
-            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4 ml-4">My Deployments</h3>
-            <div id="site-list" class="space-y-4"></div>
+            <h3 class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4 ml-4">My Deployments</h3>
+            <div id="siteList" class="space-y-4"></div>
         </section>
 
         <section id="wallet" class="page">
             <div class="glass p-8 rounded-[3rem] text-center">
-                <div class="w-20 h-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-blue-500/10">
-                    <i class="fas fa-credit-card text-blue-500 text-3xl"></i>
+                <div class="w-20 h-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
+                    <i class="fas fa-wallet text-blue-500 text-3xl"></i>
                 </div>
                 <h2 class="text-xl font-black mb-1">Top Up</h2>
-                <p class="text-xs text-gray-500 mb-8">Pilih jumlah pengisian saldo</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="addCredit(5000)" class="glass p-5 rounded-2xl hover:border-blue-500/40 font-black transition">5K</button>
-                    <button onclick="addCredit(10000)" class="glass p-5 rounded-2xl hover:border-blue-500/40 font-black transition text-blue-400">10K</button>
-                    <button onclick="addCredit(50000)" class="glass p-5 rounded-2xl hover:border-blue-500/40 font-black transition text-blue-500">50K</button>
-                    <button onclick="addCredit(100000)" class="glass p-5 rounded-2xl hover:border-blue-500/40 font-black transition text-indigo-500">100K</button>
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <button onclick="addBal(5000)" class="glass p-5 rounded-2xl font-black hover:border-blue-500/50 transition">5K</button>
+                    <button onclick="addBal(10000)" class="glass p-5 rounded-2xl font-black text-blue-400 hover:border-blue-500/50 transition">10K</button>
+                    <button onclick="addBal(50000)" class="glass p-5 rounded-2xl font-black text-blue-500 hover:border-blue-500/50 transition">50K</button>
+                    <button onclick="addBal(100000)" class="glass p-5 rounded-2xl font-black text-indigo-500 hover:border-blue-500/50 transition">100K</button>
                 </div>
             </div>
         </section>
     </div>
 
-    <nav class="fixed bottom-8 left-8 right-8 h-20 glass rounded-[2.5rem] flex items-center justify-around px-4 z-50 border border-white/5 neon-glow">
-        <button onclick="switchTab('home', this)" class="nav-btn active text-blue-500 flex flex-col items-center gap-1 transition-all">
-            <i class="fas fa-bolt text-lg"></i><span class="text-[8px] font-black uppercase">Home</span>
+    <nav class="fixed bottom-8 left-8 right-8 h-20 glass rounded-[2.5rem] flex items-center justify-around px-4 z-50 border-white/10 shadow-2xl shadow-black">
+        <button onclick="tab('home', this)" class="nav-btn text-blue-500 flex flex-col items-center gap-1 transition-all">
+            <i class="fas fa-rocket text-lg"></i><span class="text-[8px] font-black uppercase">Home</span>
         </button>
-        <button onclick="switchTab('wallet', this)" class="nav-btn text-gray-500 flex flex-col items-center gap-1">
+        <button onclick="tab('wallet', this)" class="nav-btn text-gray-500 flex flex-col items-center gap-1 transition-all">
             <i class="fas fa-wallet text-lg"></i><span class="text-[8px] font-black uppercase">Wallet</span>
         </button>
     </nav>
@@ -110,7 +110,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
@@ -130,114 +130,106 @@
         // DATA SYNC
         onValue(ref(db, `users/${myID}/profile`), (snap) => {
             if (!snap.exists()) set(ref(db, `users/${myID}/profile`), { balance: 5000 });
-            else document.getElementById('balance-val').innerText = "Rp " + snap.val().balance.toLocaleString();
+            else document.getElementById('bal-text').innerText = "Rp " + snap.val().balance.toLocaleString();
         });
 
         onValue(ref(db, `admin/announcement`), (snap) => {
-            const notice = document.getElementById('admin-notice');
             if (snap.exists() && snap.val() !== "") {
-                notice.classList.remove('hidden');
-                document.getElementById('notice-content').innerText = snap.val();
+                document.getElementById('adminBox').classList.remove('hidden');
+                document.getElementById('adminMsg').innerText = snap.val();
             }
         });
 
-        // POPUP ENGINE
-        window.showModal = (title, desc, icon, buttons) => {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-icon').innerHTML = `<i class="fas ${icon}"></i>`;
-            const area = document.getElementById('modal-action-area');
-            area.innerHTML = "";
-            buttons.forEach(b => {
-                const btn = document.createElement('button');
-                btn.className = `w-full ${b.bg || 'bg-blue-600'} py-4 rounded-2xl text-[10px] font-black tracking-widest uppercase shadow-lg`;
-                btn.innerText = b.text;
-                btn.onclick = b.click;
-                area.appendChild(btn);
-            });
-            document.getElementById('custom-modal').classList.add('modal-active');
-        };
-
-        window.closeModal = () => document.getElementById('custom-modal').classList.remove('modal-active');
-
-        window.switchTab = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = "nav-btn text-gray-500 flex flex-col items-center gap-1");
-            el.className = "nav-btn active text-blue-500 flex flex-col items-center gap-1 transition-all";
-        };
-
-        // DEPLOY LOGIC
-        window.startProcessing = async () => {
-            const code = document.getElementById('html-code').value;
-            if (!code.trim()) return showModal("Empty!", "Please paste your code first.", "fa-exclamation-triangle", [{text: "OK", click: closeModal}]);
+        // REAL DEPLOYMENT LOGIC (NO SIMULATION)
+        window.handleDeploy = async () => {
+            const htmlCode = document.getElementById('codeEditor').value;
+            if (!htmlCode.trim()) return alert("Tulis kode HTML dulu!");
 
             const snap = await get(ref(db, `users/${myID}/profile`));
             const bal = snap.val().balance || 0;
-            if (bal < 1000) return showModal("Low Balance!", "Need Rp 1.000 to deploy.", "fa-wallet", [{text: "TOP UP", click: () => { closeModal(); switchTab('wallet', document.querySelectorAll('.nav-btn')[1]); }}]);
+            if (bal < 1000) return alert("Saldo tidak cukup (Butuh Rp 1.000)");
 
-            const pBox = document.getElementById('progress-container');
-            const pBar = document.getElementById('p-bar');
-            const pText = document.getElementById('p-percent');
-            pBox.classList.remove('hidden');
+            // Bikin file blob asli
+            const blob = new Blob([htmlCode], { type: 'text/html' });
+            const fileName = `index_${Date.now()}.html`;
+            const storagePath = sRef(storage, `sites/${myID}/${fileName}`);
 
-            let width = 0;
-            const timer = setInterval(async () => {
-                if (width >= 100) {
-                    clearInterval(timer);
-                    finalizeDeploy(code, bal - 1000);
-                } else {
-                    width += Math.floor(Math.random() * 20);
-                    if(width > 100) width = 100;
-                    pBar.style.width = width + "%";
-                    pText.innerText = width + "%";
-                    document.getElementById('p-status').innerText = width < 50 ? "Encrypting..." : "Syncing to Server...";
+            // UI Progress
+            document.getElementById('pContainer').classList.remove('hidden');
+            const uploadTask = uploadBytesResumable(storagePath, blob);
+
+            uploadTask.on('state_changed', 
+                (s) => {
+                    const p = (s.bytesTransferred / s.totalBytes) * 100;
+                    document.getElementById('pBar').style.width = p + "%";
+                    document.getElementById('pPercent').innerText = Math.round(p) + "%";
+                },
+                (err) => alert("Upload Gagal: " + err.message),
+                async () => {
+                    // AMBIL LINK ASLI DARI GOOGLE STORAGE
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    
+                    // POTONG SALDO
+                    await update(ref(db, `users/${myID}/profile`), { balance: bal - 1000 });
+                    
+                    // SIMPAN DATA KE DATABASE
+                    await push(ref(db, `users/${myID}/deployed`), {
+                        name: "Web_" + Date.now().toString().slice(-4),
+                        url: downloadURL,
+                        time: Date.now()
+                    });
+
+                    // TAMPILKAN HASIL OTOMATIS
+                    showResult(downloadURL);
                 }
-            }, 400);
+            );
         };
 
-        async function finalizeDeploy(code, newBal) {
-            const fileRef = sRef(storage, `host/${myID}/index_${Date.now()}.html`);
-            try {
-                await uploadString(fileRef, code, 'raw', { contentType: 'text/html' });
-                const url = await getDownloadURL(fileRef);
-                await update(ref(db, `users/${myID}/profile`), { balance: newBal });
-                await push(ref(db, `users/${myID}/deployed`), { name: "Project_" + Date.now().toString().slice(-4), url: url, time: Date.now() });
-
-                document.getElementById('progress-container').classList.add('hidden');
-                document.getElementById('html-code').value = "";
-                
-                showModal("Deployed!", "Your website is online and ready.", "fa-check-double", [
-                    {text: "OPEN WEBSITE", click: () => { window.open(url, '_blank'); }},
-                    {text: "COPY LINK", bg: "bg-slate-700", click: () => { navigator.clipboard.writeText(url); alert("Link Copied!"); }}
-                ]);
-            } catch (e) { alert(e.message); }
+        function showResult(url) {
+            document.getElementById('pContainer').classList.add('hidden');
+            document.getElementById('codeEditor').value = "";
+            document.getElementById('liveLink').href = url;
+            document.getElementById('resultModal').classList.add('modal-show');
         }
+
+        window.closeModal = () => document.getElementById('resultModal').classList.remove('modal-show');
+        window.copyCurrentLink = () => {
+            const link = document.getElementById('liveLink').href;
+            navigator.clipboard.writeText(link);
+            alert("Link tersalin!");
+        };
 
         // RENDER LIST
         onValue(ref(db, `users/${myID}/deployed`), (snap) => {
-            const list = document.getElementById('site-list');
+            const list = document.getElementById('siteList');
             list.innerHTML = "";
             if (snap.exists()) {
                 Object.values(snap.val()).reverse().forEach(site => {
                     const d = document.createElement('div');
-                    d.className = "glass p-6 rounded-3xl flex justify-between items-center border border-white/[0.02]";
+                    d.className = "glass p-5 rounded-3xl flex justify-between items-center";
                     d.innerHTML = `
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500"><i class="fas fa-link text-xs"></i></div>
-                            <div><p class="text-[11px] font-black">${site.name}</p><p class="text-[8px] text-gray-500 uppercase font-bold">${new Date(site.time).toLocaleDateString()}</p></div>
+                            <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500"><i class="fas fa-link text-xs"></i></div>
+                            <div><p class="text-[11px] font-black text-white">${site.name}</p><p class="text-[8px] text-gray-500 font-bold uppercase">${new Date(site.time).toLocaleDateString()}</p></div>
                         </div>
-                        <a href="${site.url}" target="_blank" class="bg-white/5 border border-white/5 px-4 py-2 rounded-xl text-[9px] font-black">VIEW</a>
+                        <a href="${site.url}" target="_blank" class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-[9px] font-black hover:bg-blue-600 transition">OPEN</a>
                     `;
                     list.appendChild(d);
                 });
             }
         });
 
-        window.addCredit = async (v) => {
+        window.tab = (id, el) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.className = "nav-btn text-gray-500 flex flex-col items-center gap-1 transition-all");
+            el.className = "nav-btn text-blue-500 flex flex-col items-center gap-1 transition-all";
+        };
+
+        window.addBal = async (v) => {
             const snap = await get(ref(db, `users/${myID}/profile`));
             await update(ref(db, `users/${myID}/profile`), { balance: (snap.val().balance || 0) + v });
-            showModal("Success", `Added Rp ${v.toLocaleString()} to your wallet.`, "fa-wallet", [{text: "GREAT", click: closeModal}]);
+            alert("Saldo ditambahkan!");
         };
     </script>
 </body>
