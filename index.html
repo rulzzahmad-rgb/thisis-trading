@@ -3,115 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radz Cloud - Real Hosting</title>
+    <title>Radz Cloud - Final Enterprise</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #050505; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(20, 20, 25, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background: #020617; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .page { display: none; }
-        .active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .modal-show { display: flex !important; animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .active { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .neon-blue { border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+        .modal-active { display: flex !important; animation: popUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes popUp { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+        .nav-active { color: #3b82f6 !important; transform: translateY(-5px); filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5)); }
+        textarea::placeholder { color: rgba(59, 130, 246, 0.3); }
     </style>
 </head>
 <body class="pb-32">
 
-    <div id="resultModal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden items-center justify-center p-6">
-        <div class="glass w-full max-w-sm p-8 rounded-[2.5rem] text-center border-blue-500/30">
+    <div id="result-modal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden items-center justify-center p-6">
+        <div class="glass w-full max-w-xs p-8 rounded-[3rem] text-center neon-blue">
             <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-500 text-3xl">
-                <i class="fas fa-globe-americas animate-pulse"></i>
+                <i class="fas fa-rocket animate-bounce"></i>
             </div>
-            <h2 class="text-2xl font-black mb-2">Situs Aktif!</h2>
-            <p class="text-xs text-gray-500 mb-8">Website kamu sudah online di server global.</p>
+            <h3 class="text-2xl font-black mb-2 text-white italic">LIVE NOW!</h3>
+            <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest font-bold">Project Berhasil Online</p>
             
             <div class="space-y-3">
-                <a id="liveLink" href="#" target="_blank" class="block w-full bg-blue-600 py-4 rounded-2xl font-black text-xs tracking-widest uppercase shadow-lg shadow-blue-900/40">BUKA WEBSITE</a>
-                <button onclick="copyCurrentLink()" class="w-full bg-white/5 py-4 rounded-2xl font-black text-xs tracking-widest uppercase border border-white/10">SALIN LINK</button>
+                <a id="link-tujuan" href="#" target="_blank" class="block w-full bg-blue-600 py-4 rounded-2xl font-black text-xs tracking-widest uppercase shadow-lg">BUKA SITUS</a>
+                <button onclick="copyLink()" class="w-full bg-white/5 border border-white/10 py-4 rounded-2xl font-black text-xs tracking-widest uppercase">SALIN LINK</button>
             </div>
-            <button onclick="closeModal()" class="mt-6 text-[10px] font-bold text-gray-600 hover:text-white transition">TUTUP</button>
+            <button onclick="closeModal()" class="mt-8 text-[10px] font-bold text-gray-500 hover:text-white transition uppercase tracking-widest">Kembali</button>
         </div>
     </div>
 
-    <div class="max-w-md mx-auto p-6">
-        <header class="flex justify-between items-center py-6 mb-4">
+    <div class="max-w-md mx-auto p-5">
+        <header class="flex justify-between items-center py-8">
             <div>
-                <h1 class="text-2xl font-black italic text-white tracking-tighter">RADZ<span class="text-blue-500">.HOST</span></h1>
-                <p class="text-[9px] font-bold text-blue-500/50 uppercase tracking-[0.3em]">Network Stable</p>
+                <h1 class="text-2xl font-black italic tracking-tighter text-white">RADZ<span class="text-blue-500">.HOST</span></h1>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">Edge Node: Active</span>
+                </div>
             </div>
-            <div class="glass px-5 py-3 rounded-2xl border-r-4 border-blue-500">
-                <p class="text-[8px] text-gray-500 font-bold uppercase">Balance</p>
-                <p id="bal-text" class="text-sm font-black text-white">Rp 0</p>
+            <div class="glass px-5 py-3 rounded-2xl border-l-4 border-blue-500 neon-blue">
+                <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">Balance</p>
+                <p id="balance-val" class="text-sm font-black text-white italic">Rp 0</p>
             </div>
         </header>
 
-        <div id="adminBox" class="glass p-4 rounded-2xl mb-8 hidden border-l-4 border-blue-600">
-            <div class="flex gap-3">
+        <div id="admin-notice" class="glass p-4 rounded-3xl mb-8 border-l-4 border-blue-600 hidden">
+            <div class="flex gap-4">
                 <i class="fas fa-satellite-dish text-blue-500 mt-1"></i>
-                <p id="adminMsg" class="text-[11px] leading-relaxed text-gray-300"></p>
+                <p id="notice-text" class="text-[11px] leading-relaxed text-slate-300 font-medium italic"></p>
             </div>
         </div>
 
         <section id="home" class="page active">
-            <div class="glass p-7 rounded-[2.5rem] mb-10 border-white/5 relative overflow-hidden">
-                <div class="flex items-center gap-2 mb-6">
-                    <i class="fas fa-terminal text-blue-500 text-xs"></i>
-                    <h2 class="text-sm font-black uppercase tracking-widest">Instant Deploy</h2>
-                </div>
+            <div class="glass p-8 rounded-[3rem] mb-10 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl"></div>
+                <h2 class="text-lg font-black mb-6 flex items-center gap-3 italic">
+                    <i class="fas fa-code text-blue-500"></i> Deploy Site
+                </h2>
                 
-                <textarea id="codeEditor" placeholder="Tempel kode HTML di sini..." 
-                    class="w-full h-64 bg-black/60 border border-white/5 rounded-3xl p-5 text-[11px] font-mono text-blue-300 focus:border-blue-500/50 outline-none transition-all mb-6"></textarea>
+                <textarea id="code-input" placeholder="<html> ... </html>" 
+                    class="w-full h-64 bg-black/40 border border-slate-700/50 rounded-[2rem] p-6 text-xs font-mono text-blue-300 focus:border-blue-500 outline-none transition-all mb-6 shadow-inner"></textarea>
                 
-                <button onclick="handleDeploy()" id="btnDeploy" class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-[1.8rem] font-black text-xs tracking-[0.2em] shadow-2xl shadow-blue-900/40 active:scale-95 transition-all">
+                <button onclick="deployNow()" id="btn-deploy"
+                    class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-[1.8rem] font-black text-xs tracking-[0.3em] shadow-xl shadow-blue-900/40 active:scale-95 transition-all">
                     LAUNCH TO CLOUD
                 </button>
 
-                <div id="pContainer" class="hidden mt-8">
-                    <div class="flex justify-between items-center mb-2">
-                        <span id="pStatus" class="text-[10px] font-bold text-gray-500 uppercase">Uploading...</span>
-                        <span id="pPercent" class="text-xs font-black text-blue-500">0%</span>
+                <div id="p-box" class="hidden mt-10">
+                    <div class="flex justify-between items-center mb-3">
+                        <span id="p-status" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Syncing...</span>
+                        <span id="p-percent" class="text-xs font-black text-blue-500">0%</span>
                     </div>
-                    <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                        <div id="pBar" class="h-full bg-blue-500 shadow-[0_0_15px_#3b82f6] transition-all" style="width: 0%"></div>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                        <div id="p-bar" class="h-full bg-blue-500 shadow-[0_0_15px_#3b82f6] transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
-            <h3 class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4 ml-4">My Deployments</h3>
-            <div id="siteList" class="space-y-4"></div>
+            <h3 class="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-6 ml-4">Deployment History</h3>
+            <div id="site-list" class="space-y-5">
+                </div>
         </section>
 
         <section id="wallet" class="page">
-            <div class="glass p-8 rounded-[3rem] text-center">
-                <div class="w-20 h-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
-                    <i class="fas fa-wallet text-blue-500 text-3xl"></i>
+            <div class="glass p-10 rounded-[3rem] text-center border-white/5">
+                <div class="w-24 h-24 bg-blue-600/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-blue-500/20 shadow-inner">
+                    <i class="fas fa-wallet text-blue-500 text-4xl"></i>
                 </div>
-                <h2 class="text-xl font-black mb-1">Top Up</h2>
-                <div class="grid grid-cols-2 gap-4 mt-8">
-                    <button onclick="addBal(5000)" class="glass p-5 rounded-2xl font-black hover:border-blue-500/50 transition">5K</button>
-                    <button onclick="addBal(10000)" class="glass p-5 rounded-2xl font-black text-blue-400 hover:border-blue-500/50 transition">10K</button>
-                    <button onclick="addBal(50000)" class="glass p-5 rounded-2xl font-black text-blue-500 hover:border-blue-500/50 transition">50K</button>
-                    <button onclick="addBal(100000)" class="glass p-5 rounded-2xl font-black text-indigo-500 hover:border-blue-500/50 transition">100K</button>
+                <h2 class="text-2xl font-black italic">Refill Wallet</h2>
+                <p class="text-[10px] text-slate-500 mt-2 mb-10 font-bold uppercase tracking-widest">Tambah saldo akun Anda</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="addCredit(5000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90">5K</button>
+                    <button onclick="addCredit(10000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90 text-blue-400">10K</button>
+                    <button onclick="addCredit(50000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90 text-blue-500">50K</button>
+                    <button onclick="addCredit(100000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90 text-indigo-500">100K</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="profile" class="page">
+            <div class="glass p-10 rounded-[3rem] text-center border-white/5">
+                <div class="w-28 h-28 bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-[2.5rem] mx-auto mb-6 flex items-center justify-center shadow-2xl">
+                    <span class="text-5xl font-black italic text-white">R</span>
+                </div>
+                <h2 class="text-2xl font-black italic">Radz Developer</h2>
+                <p id="user-id-text" class="text-[10px] text-slate-500 font-mono mt-2 mb-10 tracking-[0.2em] uppercase">ID: ---</p>
+                
+                <div class="space-y-4">
+                    <button class="w-full bg-slate-800/40 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-700 shadow-xl">Account Settings</button>
+                    <button onclick="location.reload()" class="w-full bg-red-500/10 text-red-500 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-500/20">Sign Out</button>
                 </div>
             </div>
         </section>
     </div>
 
-    <nav class="fixed bottom-8 left-8 right-8 h-20 glass rounded-[2.5rem] flex items-center justify-around px-4 z-50 border-white/10 shadow-2xl shadow-black">
-        <button onclick="tab('home', this)" class="nav-btn text-blue-500 flex flex-col items-center gap-1 transition-all">
-            <i class="fas fa-rocket text-lg"></i><span class="text-[8px] font-black uppercase">Home</span>
+    <nav class="fixed bottom-8 left-8 right-8 h-20 glass rounded-[2.5rem] flex items-center justify-around px-6 z-50 neon-blue border-white/5">
+        <button onclick="switchTab('home', this)" class="nav-btn nav-active text-slate-500 flex flex-col items-center gap-1">
+            <i class="fas fa-rocket text-xl"></i><span class="text-[8px] font-black uppercase">Home</span>
         </button>
-        <button onclick="tab('wallet', this)" class="nav-btn text-gray-500 flex flex-col items-center gap-1 transition-all">
-            <i class="fas fa-wallet text-lg"></i><span class="text-[8px] font-black uppercase">Wallet</span>
+        <button onclick="switchTab('wallet', this)" class="nav-btn text-slate-500 flex flex-col items-center gap-1">
+            <i class="fas fa-wallet text-xl"></i><span class="text-[8px] font-black uppercase">Wallet</span>
+        </button>
+        <button onclick="switchTab('profile', this)" class="nav-btn text-slate-500 flex flex-col items-center gap-1">
+            <i class="fas fa-user-ninja text-xl"></i><span class="text-[8px] font-black uppercase">Radz</span>
         </button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getStorage, ref as sRef, uploadString, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
+        // CONFIG FIREBASE RADZ
         const firebaseConfig = {
             apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
             authDomain: "mybro-9ba5f.firebaseapp.com",
@@ -126,110 +155,121 @@
 
         let myID = localStorage.getItem('radz_id') || "RADZ-" + Math.floor(1000 + Math.random() * 8999);
         localStorage.setItem('radz_id', myID);
+        document.getElementById('user-id-text').innerText = "ID: " + myID;
 
-        // DATA SYNC
+        // --- TAB ENGINE ---
+        window.switchTab = (id, el) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active'));
+            el.classList.add('nav-active');
+        };
+
+        // --- SYNC DATA SALDO & ADMIN ---
         onValue(ref(db, `users/${myID}/profile`), (snap) => {
             if (!snap.exists()) set(ref(db, `users/${myID}/profile`), { balance: 5000 });
-            else document.getElementById('bal-text').innerText = "Rp " + snap.val().balance.toLocaleString();
+            else document.getElementById('balance-val').innerText = "Rp " + snap.val().balance.toLocaleString();
         });
 
         onValue(ref(db, `admin/announcement`), (snap) => {
+            const box = document.getElementById('admin-notice');
             if (snap.exists() && snap.val() !== "") {
-                document.getElementById('adminBox').classList.remove('hidden');
-                document.getElementById('adminMsg').innerText = snap.val();
+                box.classList.remove('hidden');
+                document.getElementById('notice-text').innerText = snap.val();
             }
         });
 
-        // REAL DEPLOYMENT LOGIC (NO SIMULATION)
-        window.handleDeploy = async () => {
-            const htmlCode = document.getElementById('codeEditor').value;
-            if (!htmlCode.trim()) return alert("Tulis kode HTML dulu!");
+        // --- DEPLOY ENGINE (BENERAN BERFUNGSI) ---
+        window.deployNow = async () => {
+            const htmlCode = document.getElementById('code-input').value;
+            if (!htmlCode.trim()) return alert("Mana kodenya, Radz?!");
 
+            const biaya = 1000;
             const snap = await get(ref(db, `users/${myID}/profile`));
-            const bal = snap.val().balance || 0;
-            if (bal < 1000) return alert("Saldo tidak cukup (Butuh Rp 1.000)");
+            const currentBal = snap.val().balance || 0;
+
+            if (currentBal < biaya) return alert("Saldo Kurang! Top Up dulu sana.");
+
+            // Jalankan UI Progress
+            const pBox = document.getElementById('p-box');
+            const pBar = document.getElementById('p-bar');
+            const pPercent = document.getElementById('p-percent');
+            pBox.classList.remove('hidden');
 
             // Bikin file blob asli
             const blob = new Blob([htmlCode], { type: 'text/html' });
             const fileName = `index_${Date.now()}.html`;
-            const storagePath = sRef(storage, `sites/${myID}/${fileName}`);
+            const storagePath = sRef(storage, `hosted/${myID}/${fileName}`);
 
-            // UI Progress
-            document.getElementById('pContainer').classList.remove('hidden');
             const uploadTask = uploadBytesResumable(storagePath, blob);
 
             uploadTask.on('state_changed', 
-                (s) => {
-                    const p = (s.bytesTransferred / s.totalBytes) * 100;
-                    document.getElementById('pBar').style.width = p + "%";
-                    document.getElementById('pPercent').innerText = Math.round(p) + "%";
-                },
-                (err) => alert("Upload Gagal: " + err.message),
+                (sn) => {
+                    const p = (sn.bytesTransferred / sn.totalBytes) * 100;
+                    pBar.style.width = p + "%";
+                    pPercent.innerText = Math.round(p) + "%";
+                }, 
+                (err) => alert("Upload Error: " + err.message), 
                 async () => {
-                    // AMBIL LINK ASLI DARI GOOGLE STORAGE
+                    // BERHASIL: Ambil URL Publik
                     const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
                     
-                    // POTONG SALDO
-                    await update(ref(db, `users/${myID}/profile`), { balance: bal - 1000 });
-                    
-                    // SIMPAN DATA KE DATABASE
+                    // Potong Saldo & Simpan Database
+                    await update(ref(db, `users/${myID}/profile`), { balance: currentBal - biaya });
                     await push(ref(db, `users/${myID}/deployed`), {
                         name: "Web_" + Date.now().toString().slice(-4),
                         url: downloadURL,
                         time: Date.now()
                     });
 
-                    // TAMPILKAN HASIL OTOMATIS
-                    showResult(downloadURL);
+                    // Reset UI & Tampilkan Popup
+                    pBox.classList.add('hidden');
+                    document.getElementById('code-input').value = "";
+                    openModal(downloadURL);
                 }
             );
         };
 
-        function showResult(url) {
-            document.getElementById('pContainer').classList.add('hidden');
-            document.getElementById('codeEditor').value = "";
-            document.getElementById('liveLink').href = url;
-            document.getElementById('resultModal').classList.add('modal-show');
+        // --- MODAL ENGINE ---
+        function openModal(url) {
+            document.getElementById('link-tujuan').href = url;
+            document.getElementById('result-modal').classList.add('modal-active');
         }
-
-        window.closeModal = () => document.getElementById('resultModal').classList.remove('modal-show');
-        window.copyCurrentLink = () => {
-            const link = document.getElementById('liveLink').href;
-            navigator.clipboard.writeText(link);
-            alert("Link tersalin!");
+        window.closeModal = () => document.getElementById('result-modal').classList.remove('modal-active');
+        window.copyLink = () => {
+            const url = document.getElementById('link-tujuan').href;
+            navigator.clipboard.writeText(url);
+            alert("Link Berhasil Disalin!");
         };
 
-        // RENDER LIST
+        // --- RENDER LIST RIWAYAT ---
         onValue(ref(db, `users/${myID}/deployed`), (snap) => {
-            const list = document.getElementById('siteList');
+            const list = document.getElementById('site-list');
             list.innerHTML = "";
             if (snap.exists()) {
                 Object.values(snap.val()).reverse().forEach(site => {
                     const d = document.createElement('div');
-                    d.className = "glass p-5 rounded-3xl flex justify-between items-center";
+                    d.className = "glass p-5 rounded-[2rem] flex justify-between items-center group hover:border-blue-500/50 transition-all";
                     d.innerHTML = `
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500"><i class="fas fa-link text-xs"></i></div>
-                            <div><p class="text-[11px] font-black text-white">${site.name}</p><p class="text-[8px] text-gray-500 font-bold uppercase">${new Date(site.time).toLocaleDateString()}</p></div>
+                            <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500"><i class="fas fa-globe-asia text-xs"></i></div>
+                            <div>
+                                <p class="text-[11px] font-black text-white italic">${site.name}</p>
+                                <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">${new Date(site.time).toLocaleDateString()}</p>
+                            </div>
                         </div>
-                        <a href="${site.url}" target="_blank" class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-[9px] font-black hover:bg-blue-600 transition">OPEN</a>
+                        <a href="${site.url}" target="_blank" class="bg-blue-600 hover:bg-blue-500 px-5 py-2.5 rounded-xl text-[9px] font-black shadow-lg transition-all">OPEN</a>
                     `;
                     list.appendChild(d);
                 });
+            } else {
+                list.innerHTML = `<p class="text-center text-slate-600 text-[10px] font-black uppercase tracking-[0.3em] py-10 italic">No Domains Registered</p>`;
             }
         });
 
-        window.tab = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.className = "nav-btn text-gray-500 flex flex-col items-center gap-1 transition-all");
-            el.className = "nav-btn text-blue-500 flex flex-col items-center gap-1 transition-all";
-        };
-
-        window.addBal = async (v) => {
+        window.addCredit = async (val) => {
             const snap = await get(ref(db, `users/${myID}/profile`));
-            await update(ref(db, `users/${myID}/profile`), { balance: (snap.val().balance || 0) + v });
-            alert("Saldo ditambahkan!");
+            await update(ref(db, `users/${myID}/profile`), { balance: (snap.val().balance || 0) + val });
         };
     </script>
 </body>
